@@ -1,2 +1,6 @@
 # upload-bigFile-proress-bar
-It uses ajax and js to create a progress bar. The page is no freshing
+
+No freshing to upload big file. Also create a progress bar.
+
+The method is Ajax and Javasript
+
