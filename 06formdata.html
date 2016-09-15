@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style type="text/css">
+			#pat{
+				width:440px;
+				height: 45px;
+				border:5px solid pink;
+			}
+			#son{
+				width:0;
+				height: 100%;
+				background-color: lightgreen;
+			}
+		</style>
+		<script type="text/javascript">
+			//给form表达制作一个提交事件onsubmit
+			window.onload = function() {
+				var fm=document.getElementsByTagName('form')[0];  //get the first object named form on the page
+
+				fm.onsubmit = function(evt){
+					//1收集表单信息,有可能表单域有20几个，那么重复的代码就会很多。拼装也会很麻烦
+					// var nm = document.getElementById('username').value;
+					// var pwd = document.getElementById('pwd').value;
+					// var email = document.getElementById('email').value;
+
+					// //因为提交表单，是post，所以我们要先请求字符串信息,用&和双引号拼接起来；
+					// var info = "name="+nm+"&pwd="+pwd+"&email="+email;
+
+					//优化代码:通过formdata表单数据对象，快速收集表单信息(普通表单域 和 上传文件域)
+					var fd = new FormData(fm);  //收集fm的表单信息  也可以使用this（其代表事件的元素节点对象）
+
+
+					//2ajax把收集好的信息传递给服务器
+					var xhr = new XMLHttpRequest();
+
+					//08上传大附件代码
+					//给ajax设置上传附件事件
+					xhr.upload.onprogress = function(evt1){   //对象调用属性，属性调用事件
+						//通过事件对象evt 感知附件的上传情况 
+						//console.log(evt);
+						var loaded = evt1.loaded;  //对象访问成员，已经上传的大小
+						var total = evt1.total; //总大小；
+						var per = Math.floor((loaded/total)*100)+ "%"; //已经上传的百分比
+						document.getElementById('son').innerHTML = per;
+						document.getElementById('son').style.width = per;
+					}
+
+					//事件
+					xhr.onreadystatechange = function(){
+						if(xhr.readyState == 4){
+							alert(xhr.responseText);
+						}
+					}
+					xhr.open('post','./06formdata.php');
+					// //因为post，所以要设置头
+					//xhr.setRequestHeader("content-type","application/x-www-form-urlencoded");
+					//alert(info);
+					//xhr.send(info);
+					xhr.send(fd);
+
+					//阻止浏览器默认动作，因为默认会跳转
+					//方法1：事件阻止对象 will not take the browser to a new URL
+					evt.preventDefault();
+					//alert(123);
+					//方法2:
+					//return false;
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<h2>无刷新方式收集表单并提交表单(FormData)/无刷新方式上传附件/大附件上传</h2>
+		<!--action="./06formdata.php"-->
+		<form action="./06formdata.php">
+			<p>Username: <input type="text" name="username" id="username"></p>
+			<p>Password: <input type="text" name="pwd" id="pwd"></p>
+			<p>Email: <input type="text" name="email" id="email"></p>
+			<p>Image: <input type="file" name="image" id="image"></p>  <!--07上传附件的代码-->
+			<div id="pat"><div id="son"></div></div>
+			<p><input type="submit" value="register" id="btn"></p>
+		</form>
+
+
+	</body>
+</html>
